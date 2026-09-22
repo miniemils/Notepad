@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 
 import javax.swing.JFrame;
 import javax.swing.JToolBar;
@@ -18,6 +20,7 @@ import javax.swing.undo.UndoManager;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class NotepadGUI extends JFrame{
 	
@@ -61,9 +64,9 @@ public class NotepadGUI extends JFrame{
 		
 		JMenuBar menuBar = new JMenuBar();	
 		menuBar.add(addFileMenu());
-		//menuBar.add(addEditMenu());
-		//menuBar.add(addFormatMenu());
-		//menuBar.add(addViewMenu());
+		menuBar.add(addEditMenu());
+		menuBar.add(addFormatMenu());
+		menuBar.add(addViewMenu());
 		toolBar.add(menuBar);
 	}
 	
@@ -126,10 +129,29 @@ public class NotepadGUI extends JFrame{
 					if(result != JFileChooser.APPROVE_OPTION)
 						return;
 					try {
+						File selectedFile = fileChooser.getSelectedFile();
 						
+						String fileName = selectedFile.getName();
+						if(!fileName.substring(fileName.length() - 4).equalsIgnoreCase(".txt")) {
+							selectedFile = new File(selectedFile.getAbsoluteFile() + ".txt");
+						}
+						
+						selectedFile.createNewFile();
+						
+						FileWriter fileWriter = new FileWriter(selectedFile);
+						BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+						bufferedWriter.write(textArea.getText());
+						bufferedWriter.close();
+						fileWriter.close();
+						
+						setTitle(fileName);
+
+	                    currentFile = selectedFile;
+
+	                    JOptionPane.showMessageDialog(NotepadGUI.this, "Saved File!");
 					}
-					catch (Exception e1) {
-						
+					catch(Exception e1) {
+						e1.printStackTrace();
 					}
 				}
 			}
@@ -153,4 +175,18 @@ public class NotepadGUI extends JFrame{
 		return fileMenu;
 	}
 	
+	private JMenu addEditMenu() {
+		JMenu editMenu = new JMenu("Edit");
+		return editMenu;
+	}
+	
+	private JMenu addFormatMenu() {
+		JMenu formatMenu = new JMenu("Format");
+		return formatMenu;
+	}
+	
+	private JMenu addViewMenu() {
+		JMenu viewMenu = new JMenu("View");
+		return viewMenu;
+	}
 }
