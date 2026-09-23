@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.ComponentOrientation;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -21,6 +22,7 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JCheckBoxMenuItem;
 
 public class NotepadGUI extends JFrame{
 	
@@ -177,11 +179,92 @@ public class NotepadGUI extends JFrame{
 	
 	private JMenu addEditMenu() {
 		JMenu editMenu = new JMenu("Edit");
+		
+		JMenuItem undoMenuItem = new JMenuItem("Undo");
+		undoMenuItem.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(undoManager.canUndo()) {
+						undoManager.undo();
+					}
+				}
+			}
+		);
+		editMenu.add(undoMenuItem);	
+		
+		JMenuItem redoMenuItem = new JMenuItem("Redo");
+		redoMenuItem.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(undoManager.canRedo()) {
+						undoManager.redo();
+					}
+				}
+			}
+		);
+		editMenu.add(redoMenuItem);
+		
 		return editMenu;
 	}
 	
 	private JMenu addFormatMenu() {
 		JMenu formatMenu = new JMenu("Format");
+		
+		JCheckBoxMenuItem wordWrapMenuItem = new JCheckBoxMenuItem("Word Wrap");
+		wordWrapMenuItem.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					boolean isChecked = wordWrapMenuItem.getState();
+					if(isChecked) {
+						textArea.setLineWrap(true);
+						textArea.setWrapStyleWord(true);
+					}
+					else {
+						textArea.setLineWrap(false);
+						textArea.setWrapStyleWord(false);
+					}
+				}
+			}
+		);
+		formatMenu.add(wordWrapMenuItem);
+		
+		JMenu alignTextMenu = new JMenu("Align Text");
+		
+		JMenuItem alignTextLeftMenuItem = new JMenuItem("Left");
+		alignTextLeftMenuItem.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textArea.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+				}
+			});
+		alignTextMenu.add(alignTextLeftMenuItem);
+		
+		JMenuItem alignTextRightMenuItem = new JMenuItem("Right");
+		alignTextRightMenuItem.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+				}
+			});
+		alignTextMenu.add(alignTextRightMenuItem);
+		
+		formatMenu.add(alignTextMenu);
+		
+		JMenuItem fontMenuItem = new JMenuItem("Font...");
+		fontMenuItem.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+				}
+			});
+		formatMenu.add(fontMenuItem);
+		
 		return formatMenu;
 	}
 	
