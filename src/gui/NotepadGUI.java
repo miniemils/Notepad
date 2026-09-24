@@ -260,7 +260,7 @@ public class NotepadGUI extends JFrame{
 			new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-
+					new FontMenu(NotepadGUI.this).setVisible(true);
 				}
 			});
 		formatMenu.add(fontMenuItem);
